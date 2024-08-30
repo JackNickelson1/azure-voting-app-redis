@@ -48,7 +48,7 @@ pipeline {
                 echo "Workspace is $WORKSPACE"
                 dir("$WORKSPACE/azure-vote") {
                     script {
-                        docker.withDocker('https://index.docker.io/v1/', 'DockerHubCredentials')
+                        docker.withRegistry('https://index.docker.io/v1/', 'DockerHubCredentials')
                         def image = docker.build('stevendube/jenkins-pipeline:latest')
                         image.push()
                     }
