@@ -26,5 +26,34 @@ pipeline {
                 """)
             }
         }
+
+        stage('Start test app') {
+            steps {
+                bat(script: """
+                    docker-compose up -d
+                """)
+            }
+        }
+
+        stage('Stop app') {
+            steps {
+                bat(script: """
+                    docker-compose down
+                """)
+            }
+        }
+
+        stage('Push container') {
+            steps {
+                echo "Workspace is $WORKSPACE"
+                dir("$WORKSPACE/azure-vote") {
+                    script {
+                        docker.withDockerRegistry('https://index.docker.io/v1/', 'DockerHubCredentials')
+                        def image = docker.build('stevendube/jenkins-pipeline:latest')
+                        image.push()
+                    }
+                }
+            }
+        }
     }
 }
